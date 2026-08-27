@@ -38,6 +38,88 @@
   .screen.active{display:block;}
   .wrap{max-width:720px;margin:0 auto;}
 
+  /* ---------- GLOBAL NAV ---------- */
+  #global-nav{
+    position:sticky;top:0;z-index:40;background:rgba(241,238,227,.92);backdrop-filter:blur(8px);
+    border-bottom:1.5px solid var(--line);
+  }
+  .nav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+  .nav-brand{display:flex;align-items:center;gap:7px;font-family:Georgia,serif;font-weight:700;font-size:18px;color:var(--sage-deep);white-space:nowrap;}
+  .nav-links{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+  .nav-item{position:relative;}
+  .nav-link{
+    display:flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:transparent;
+    font-size:13.5px;font-weight:600;color:var(--ink-soft);transition:all .15s ease;
+  }
+  .nav-link:hover{background:var(--sage-tint);color:var(--sage-deep);}
+  .nav-link.active{background:var(--sage-deep);color:#fff;}
+  .nav-caret{font-size:9px;margin-left:1px;}
+  .nav-dropdown{
+    position:absolute;top:calc(100% + 6px);left:0;background:#fff;border-radius:14px;padding:8px;min-width:200px;
+    box-shadow:var(--shadow);display:none;flex-direction:column;gap:1px;z-index:45;
+  }
+  .nav-item:hover .nav-dropdown, .nav-item.open .nav-dropdown{display:flex;}
+  .nav-dropdown a, .nav-dropdown .zone-sub{
+    display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:600;color:var(--ink);
+  }
+  .nav-dropdown a:hover{background:var(--sage-tint);}
+  .nav-dropdown .zone-sub{color:var(--ink-soft);font-weight:500;padding-left:22px;font-size:12.5px;}
+  .nav-dropdown .divider{height:1px;background:var(--line);margin:5px 4px;}
+
+  /* ---------- HOME / BERANDA ---------- */
+  #screen-home .home-wrap{max-width:820px;margin:0 auto;}
+  .home-hero{text-align:center;padding:34px 10px 10px;}
+  .home-hero h1{font-size:34px;margin:8px 0 4px;color:var(--sage-deep);}
+  .home-hero p{color:var(--ink-soft);font-size:15px;max-width:480px;margin:0 auto 20px;line-height:1.7;}
+  .home-section{margin-top:36px;}
+  .home-section h2{font-size:21px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+  .home-section .sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:16px;}
+
+  .gad-table-wrap{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow);overflow-x:auto;}
+  table.gad-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px;}
+  table.gad-table th{text-align:left;padding:10px 12px;color:var(--sage-deep);font-size:12px;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--line);}
+  table.gad-table td{padding:12px;vertical-align:top;border-bottom:1px solid var(--line);line-height:1.6;}
+  table.gad-table tr:last-child td{border-bottom:none;}
+  table.gad-table td.yr{font-weight:700;color:var(--sage-deep);font-size:15px;}
+  table.gad-table td.num{font-weight:700;color:var(--gold);font-size:16px;white-space:nowrap;}
+
+  .gad-chart{background:#fff;border-radius:18px;padding:20px 22px;box-shadow:var(--shadow);margin-top:14px;}
+  .gad-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .gad-bar-row:last-child{margin-bottom:0;}
+  .gad-bar-label{width:52px;font-weight:700;color:var(--ink);font-size:13.5px;flex-shrink:0;}
+  .gad-bar-track{flex:1;background:var(--sage-tint);border-radius:999px;height:22px;overflow:hidden;}
+  .gad-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--sage),var(--gold));display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font-size:11.5px;font-weight:700;animation:growBar 1s ease both;}
+  @keyframes growBar{from{width:0!important;}}
+  .gad-bar-note{width:76px;flex-shrink:0;font-size:11px;color:var(--ink-soft);text-align:right;}
+
+  .news-grid{display:flex;flex-direction:column;gap:12px;}
+  .news-card{background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .news-card .n-title{font-weight:700;font-size:14.5px;margin-bottom:6px;}
+  .news-card .n-desc{color:var(--ink-soft);font-size:13px;line-height:1.6;margin-bottom:8px;}
+  .news-card .n-note{font-size:11.5px;color:var(--gold);font-weight:600;margin-bottom:8px;}
+  .news-card a.n-link{font-size:12.5px;font-weight:700;color:var(--sage-deep);word-break:break-all;}
+  .news-card a.n-link:hover{text-decoration:underline;}
+
+  .help-card{
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage));color:#fff;border-radius:20px;
+    padding:26px 24px;box-shadow:var(--shadow);
+  }
+  .help-card h3{margin:0 0 10px;font-size:18px;}
+  .help-card p{margin:0 0 14px;font-size:13.5px;line-height:1.7;opacity:.95;}
+  .help-card .h-row{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;margin-bottom:6px;}
+
+  .toolkit-embed{background:#fff;border-radius:18px;padding:12px;box-shadow:var(--shadow);}
+  .toolkit-embed iframe{width:100%;height:72vh;border:none;border-radius:12px;display:block;}
+  .toolkit-fallback{text-align:center;padding:10px 0 2px;font-size:12.5px;color:var(--ink-soft);}
+  .toolkit-fallback a{color:var(--sage-deep);font-weight:700;}
+
+  .cta-row{display:flex;justify-content:center;margin-top:6px;}
+
+  @media(max-width:600px){
+    .nav-brand span.txt{display:none;}
+    .home-hero h1{font-size:27px;}
+  }
+
   /* ---------- START SCREEN ---------- */
   #screen-start.active{display:flex;align-items:center;justify-content:center;}
   .hero{
@@ -216,10 +298,175 @@
 </head>
 <body>
 
+<!-- GLOBAL NAV -->
+<nav id="global-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">🌿 <span class="txt">Calm Quest</span></div>
+    <div class="nav-links">
+      <div class="nav-item">
+        <a href="#" class="nav-link" data-nav="screen-home">🏠 Beranda</a>
+      </div>
+      <div class="nav-item">
+        <a href="#" class="nav-link" data-nav="screen-start">🎲 Calm Quest <span class="nav-caret">▾</span></a>
+        <div class="nav-dropdown">
+          <a href="#" data-nav="screen-start">🎯 100 Board</a>
+          <div class="divider"></div>
+          <span class="zone-sub">📚 Akademik</span>
+          <span class="zone-sub">🤝 Pertemanan</span>
+          <span class="zone-sub">🏠 Keluarga</span>
+          <span class="zone-sub">🔮 Masa Depan</span>
+          <span class="zone-sub">📱 Media Sosial</span>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="#" class="nav-link" data-nav="screen-toolkit">🧰 Calm Toolkit</a>
+      </div>
+      <div class="nav-item">
+        <a href="#" class="nav-link" data-nav="screen-gad">🧠 Kenali GAD</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div id="app">
 
+  <!-- HOME / BERANDA -->
+  <section id="screen-home" class="screen active">
+    <div class="home-wrap">
+      <div class="home-hero">
+        <span class="hero-mark">🌿</span>
+        <h1>CALM QUEST</h1>
+        <p>Ruang untuk mengenali, memahami, dan menghadapi kecemasan sehari-hari bersama teman-temanmu — lewat cerita, refleksi, dan permainan papan.</p>
+        <div class="cta-row">
+          <button class="btn-primary" data-nav="screen-start">🎲 MULAI CALM QUEST</button>
+        </div>
+      </div>
+
+      <!-- SAJIAN DATA GAD -->
+      <div class="home-section">
+        <h2>📊 Sajian Data GAD</h2>
+        <div class="sub">Gambaran perkembangan data kecemasan (Generalized Anxiety Disorder) pada remaja Indonesia dari berbagai sumber.</div>
+
+        <div class="gad-table-wrap">
+          <table class="gad-table">
+            <thead><tr><th>Tahun</th><th>Data</th><th>Angka</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="yr">2024</td>
+                <td>Kemenkes membahas GAD sebagai salah satu gangguan kecemasan yang perlu diwaspadai, tetapi tidak menyediakan prevalensi nasional GAD remaja khusus tahun 2024. <em>(Ayo Sehat)</em></td>
+                <td class="num">—</td>
+              </tr>
+              <tr>
+                <td class="yr">2025</td>
+                <td>Studi nasional mengenai anak/remaja Indonesia menunjukkan setidaknya 5% anak usia 10–17 tahun melaporkan pernah memiliki kondisi kesehatan mental yang terdiagnosis. Studi ini tidak memberikan angka khusus GAD. <em>(BMJ Paediatrics Open)</em></td>
+                <td class="num">≥5%</td>
+              </tr>
+              <tr>
+                <td class="yr">2026</td>
+                <td>Data skrining Kemenkes menunjukkan sekitar 338.000 anak (4,4%) mengalami gejala kecemasan dari anak yang mengikuti Cek Kesehatan Gratis. Ini hasil skrining, bukan diagnosis GAD.</td>
+                <td class="num">4,4%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="gad-chart">
+          <div class="gad-bar-row">
+            <div class="gad-bar-label">2024</div>
+            <div class="gad-bar-track"><div class="gad-bar-fill" style="width:4%;background:var(--line);color:var(--ink-soft);"></div></div>
+            <div class="gad-bar-note">tidak ada data</div>
+          </div>
+          <div class="gad-bar-row">
+            <div class="gad-bar-label">2025</div>
+            <div class="gad-bar-track"><div class="gad-bar-fill" style="width:50%;">≥5%</div></div>
+            <div class="gad-bar-note">kondisi mental umum</div>
+          </div>
+          <div class="gad-bar-row">
+            <div class="gad-bar-label">2026</div>
+            <div class="gad-bar-track"><div class="gad-bar-fill" style="width:44%;">4,4%</div></div>
+            <div class="gad-bar-note">skrining gejala</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAD UPDATE -->
+      <div class="home-section">
+        <h2>📰 GAD Update</h2>
+        <div class="sub">Berita dan kasus terkini seputar kesehatan mental &amp; bullying pada remaja.</div>
+        <div class="news-grid">
+          <div class="news-card">
+            <div class="n-title">1. Kasus Alumni SMAN 2 Bantul Mengaku Dibully hingga Gangguan Mental</div>
+            <div class="n-desc">Kondisi Terkini Alumni SMAN 2 Bantul yang Ngaku Dibully-Kena Gangguan Mental — membahas kasus nyata seorang alumni yang mengaku mengalami bullying dan menjalani pengobatan terkait kondisi mental.</div>
+            <div class="n-note">⚠️ Beritanya menyebut diagnosis lain, bukan GAD — jangan diberi label "kasus GAD".</div>
+            <a class="n-link" href="https://www.detik.com/jogja/berita/d-8542828/kondisi-terkini-alumni-sman-2-bantul-yang-ngaku-dibully-kena-gangguan-mental/amp" target="_blank" rel="noopener">detik.com →</a>
+          </div>
+          <div class="news-card">
+            <div class="n-title">2. Pemkab Beri Pendampingan Korban Bullying</div>
+            <div class="n-desc">Pemkab Bantul Beri Pendampingan Alumni SMAN 2 Korban Bullying.</div>
+            <a class="n-link" href="https://www.detik.com/jogja/berita/d-8541264/pemkab-bantul-beri-pendampingan-alumni-sman-2-korban-bullying" target="_blank" rel="noopener">detik.com →</a>
+          </div>
+          <div class="news-card">
+            <div class="n-title">3. Kasus Bullying Siswa MTs di Pati</div>
+            <div class="n-desc">DPRD Desak Diusut Tuntas dan Tak Ditutup-tutupi. Muncul dalam pemberitaan Kompas pada 6 Agustus 2026, melibatkan siswa MTs yang diduga menjadi korban bullying.</div>
+            <a class="n-link" href="https://www.kompas.com" target="_blank" rel="noopener">kompas.com →</a>
+          </div>
+          <div class="news-card">
+            <div class="n-title">4. Kasus Bullying Pelajar di Kulon Progo</div>
+            <div class="n-desc">Dinkes Kulon Progo Ungkap Peningkatan Gangguan Jiwa di Kalangan Pelajar, Bullying Jadi Salah Satu Penyebab.</div>
+            <a class="n-link" href="https://www.yogyakarta.kompas.com/read/2024/01/24/082802978/dinkes-kulon-progo-ungkap-peningkatan-gangguan-jiwa-di-kalangan-pelajar-bullying-jadi-salah-satu-penyebab" target="_blank" rel="noopener">yogyakarta.kompas.com →</a>
+          </div>
+          <div class="news-card">
+            <div class="n-title">5. Kasus Perundungan Remaja di Pontianak</div>
+            <div class="n-desc">Kasus Kekerasan Siswi SMP di Pontianak dari Kacamata Psikologi Remaja.</div>
+            <a class="n-link" href="https://www.sains.kompas.com/read/2019/04/15/171806423/kasus-kekerasan-siswi-smp-di-pontianak-dari-kacamata-psikologi-remaja" target="_blank" rel="noopener">sains.kompas.com →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANTUAN LEBIH LANJUT -->
+      <div class="home-section">
+        <h2>🆘 Bantuan Lebih Lanjut</h2>
+        <div class="sub">Untuk konteks Bantul — layanan pengaduan dan pendampingan resmi.</div>
+        <div class="help-card">
+          <h3>UPTD Perlindungan Perempuan dan Anak (PPA) Kabupaten Bantul</h3>
+          <p>Menyediakan layanan bagi perempuan dan anak yang menghadapi berbagai permasalahan, dengan fungsi antara lain pengaduan, penjangkauan, pengelolaan kasus, mediasi, serta pendampingan psikologis dan sosial.</p>
+          <div class="h-row">📞 Hotline: 0877-3890-7000</div>
+          <div class="h-row">📍 Jl. Dr. Wahidin Sudiro Husodo No. 76, Bejen, Bantul, Kabupaten Bantul, DIY 55714</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALM TOOLKIT -->
+  <section id="screen-toolkit" class="screen">
+    <div class="home-wrap">
+      <div class="home-section" style="margin-top:20px;">
+        <h2>🧰 Calm Toolkit</h2>
+        <div class="sub">Kumpulan teknik dan latihan untuk membantu menenangkan diri saat cemas.</div>
+        <div class="toolkit-embed">
+          <iframe src="https://docs.google.com/document/d/1Vd_s2T3M17KC-bhemoGHa60dGwZA9IJl/preview" loading="lazy"></iframe>
+        </div>
+        <div class="toolkit-fallback">Dokumen tidak muncul? <a href="https://docs.google.com/document/d/1Vd_s2T3M17KC-bhemoGHa60dGwZA9IJl/edit?usp=sharing" target="_blank" rel="noopener">Buka langsung di Google Docs →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KENALI GAD -->
+  <section id="screen-gad" class="screen">
+    <div class="home-wrap">
+      <div class="home-section" style="margin-top:20px;">
+        <h2>🧠 Kenali GAD</h2>
+        <div class="sub">Apa itu Generalized Anxiety Disorder (GAD), tanda-tanda, dan cara mengenalinya.</div>
+        <div class="toolkit-embed">
+          <iframe src="https://docs.google.com/document/d/1hRGdbt0L0FSCo_Zs8jHY9NYBq1St4mYp/preview" loading="lazy"></iframe>
+        </div>
+        <div class="toolkit-fallback">Dokumen tidak muncul? <a href="https://docs.google.com/document/d/1hRGdbt0L0FSCo_Zs8jHY9NYBq1St4mYp/edit?usp=sharing" target="_blank" rel="noopener">Buka langsung di Google Docs →</a></div>
+      </div>
+    </div>
+  </section>
+
   <!-- START SCREEN -->
-  <section id="screen-start" class="screen active">
+  <section id="screen-start" class="screen">
     <div class="hero">
       <span class="hero-mark">🌿</span>
       <h1>CALM QUEST</h1>
@@ -514,7 +761,19 @@ document.getElementById('start-btn').onclick = ()=>{
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link[data-nav]').forEach(a=>{
+    a.classList.toggle('active', a.dataset.nav===id);
+  });
+  window.scrollTo({top:0, behavior:'instant'});
 }
+
+/* ---------- GLOBAL NAV WIRING ---------- */
+document.querySelectorAll('[data-nav]').forEach(el=>{
+  el.addEventListener('click', (e)=>{
+    e.preventDefault();
+    show(el.dataset.nav);
+  });
+});
 
 /* ============================================================
    BOARD RENDER
