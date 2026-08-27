@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CALM QUEST — Kenali. Pahami. Hadapi.</title>
+<style>
+  :root{
+    --paper:#F1EEE3;
+    --paper-deep:#E8E3D3;
+    --ink:#25302A;
+    --ink-soft:#5B6A5E;
+    --sage:#4C6B52;
+    --sage-deep:#374D3C;
+    --sage-tint:#DCE6DB;
+    --gold:#CC9A34;
+    --line:#D3CDBB;
+    --z-akademik:#7C9A82;
+    --z-pertemanan:#B0794F;
+    --z-keluarga:#CC9A34;
+    --z-masadepan:#83769F;
+    --z-medsos:#BD7681;
+    --shadow: 0 8px 24px rgba(37,48,42,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:Georgia,'Times New Roman',serif;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  textarea,input{font-family:inherit;}
+  .screen{display:none;min-height:100vh;padding:24px 16px 60px;}
+  .screen.active{display:block;}
+  .wrap{max-width:720px;margin:0 auto;}
+
+  /* ---------- START SCREEN ---------- */
+  #screen-start.active{display:flex;align-items:center;justify-content:center;}
+  .hero{
+    text-align:center;
+    max-width:520px;
+    animation:fadeUp .7s ease both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .hero-mark{font-size:44px;margin-bottom:6px;display:inline-block;animation:sway 4s ease-in-out infinite;}
+  @keyframes sway{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
+  .hero h1{font-size:42px;font-weight:600;margin:6px 0 2px;color:var(--sage-deep);letter-spacing:.5px;}
+  .hero .tag{color:var(--ink-soft);font-size:15px;margin-bottom:22px;letter-spacing:2px;text-transform:uppercase;}
+  .hero p{color:var(--ink-soft);line-height:1.7;font-size:15.5px;margin:0 auto 8px;max-width:440px;}
+  .hero .noanswer{font-size:13px;color:var(--sage);margin:18px 0 26px;font-weight:600;}
+  .btn-primary{
+    background:var(--sage-deep);color:#fff;padding:15px 34px;border-radius:999px;
+    font-size:15.5px;font-weight:600;letter-spacing:.4px;box-shadow:var(--shadow);
+    transition:transform .15s ease, background .2s ease;
+  }
+  .btn-primary:hover{background:var(--sage);transform:translateY(-2px);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-ghost{
+    background:transparent;color:var(--sage-deep);padding:11px 22px;border-radius:999px;
+    border:1.5px solid var(--sage-deep);font-weight:600;font-size:14px;
+  }
+  .btn-ghost:hover{background:var(--sage-tint);}
+
+  .player-select{margin-top:10px;}
+  .player-select h3{font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-soft);margin-bottom:14px;font-family:'Work Sans';font-weight:600;}
+  .player-grid{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:26px;}
+  .player-chip{
+    width:78px;padding:14px 6px 10px;border-radius:16px;background:#fff;border:2px solid var(--line);
+    display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s ease;
+  }
+  .player-chip .dot{width:26px;height:26px;border-radius:50%;}
+  .player-chip span.name{font-size:12px;font-weight:600;color:var(--ink-soft);}
+  .player-chip.selected{border-color:var(--sage-deep);background:var(--sage-tint);transform:translateY(-2px);}
+
+  /* ---------- BOARD SCREEN ---------- */
+  #screen-board .topbar{
+    display:flex;align-items:center;justify-content:space-between;max-width:720px;margin:0 auto 14px;
+  }
+  #screen-board .topbar .brand{display:flex;align-items:center;gap:8px;font-family:'Fraunces';font-weight:600;font-size:19px;color:var(--sage-deep);}
+  .zone-pill{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;
+    background:#fff;font-size:13px;font-weight:600;box-shadow:var(--shadow);
+  }
+  .turn-banner{
+    max-width:720px;margin:0 auto 16px;background:#fff;border-radius:18px;padding:14px 18px;
+    display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);
+  }
+  .turn-banner .who{display:flex;align-items:center;gap:10px;font-weight:600;}
+  .turn-banner .who .dot{width:20px;height:20px;border-radius:50%;}
+  #dice-btn{
+    background:var(--gold);color:#fff;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14px;
+    box-shadow:var(--shadow);transition:transform .12s ease;
+  }
+  #dice-btn:hover{transform:scale(1.05);}
+  #dice-btn:disabled{opacity:.45;cursor:default;transform:none;}
+  #dice-face{font-size:20px;margin-right:6px;}
+
+  .board-wrap{max-width:720px;margin:0 auto;background:#fff;border-radius:22px;padding:14px;box-shadow:var(--shadow);}
+  .board{
+    display:grid;grid-template-columns:repeat(10,1fr);gap:3px;
+  }
+  .sq{
+    aspect-ratio:1/1;border-radius:6px;position:relative;display:flex;align-items:center;justify-content:center;
+    font-size:9px;font-weight:600;color:rgba(0,0,0,.35);
+  }
+  .sq .num{position:absolute;top:2px;left:3px;font-size:8px;}
+  .sq.situation::after{content:'✦';position:absolute;font-size:11px;color:rgba(255,255,255,.85);}
+  .pawns-on{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;gap:2px;flex-wrap:wrap;pointer-events:none;}
+  .pawn-mini{width:15px;height:15px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+  .legend span{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+  .legend .sw{width:11px;height:11px;border-radius:3px;}
+
+  .players-status{max-width:720px;margin:16px auto 0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .p-status{background:#fff;border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;box-shadow:0 3px 10px rgba(37,48,42,.08);}
+  .p-status .dot{width:14px;height:14px;border-radius:50%;}
+
+  /* ---------- OVERLAY / MODAL FLOW ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(37,48,42,.55);z-index:50;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .overlay.hidden{display:none;}
+  .sheet{
+    background:var(--paper);width:100%;max-width:720px;max-height:92vh;overflow-y:auto;
+    border-radius:26px 26px 0 0;padding:26px 22px 34px;animation:slideUp .35s ease both;
+    box-shadow:0 -10px 40px rgba(0,0,0,.25);
+  }
+  @keyframes slideUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .step-tag{font-size:11.5px;text-transform:uppercase;letter-spacing:1.6px;font-weight:700;color:var(--sage);margin-bottom:8px;}
+  .step-title{font-size:23px;font-weight:600;margin:0 0 14px;}
+  .step-body p{line-height:1.75;font-size:15px;color:var(--ink);}
+  .quote-box{
+    background:#fff;border-radius:16px;padding:18px 20px;font-size:15.5px;line-height:1.75;
+    border-left:4px solid var(--sage);font-style:italic;color:var(--ink);
+  }
+  .step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px;}
+  .progress-dots{display:flex;gap:5px;}
+  .progress-dots span{width:6px;height:6px;border-radius:50%;background:var(--line);}
+  .progress-dots span.done{background:var(--sage);}
+
+  .metoo-row{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .metoo-card{background:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .metoo-card .pname{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;}
+  .metoo-card .dot{width:16px;height:16px;border-radius:50%;}
+  .toggle-2{display:flex;gap:6px;}
+  .toggle-2 button{padding:7px 12px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--sage-tint);color:var(--sage-deep);}
+  .toggle-2 button.on{background:var(--sage-deep);color:#fff;}
+  .metoo-tally{margin-top:14px;font-size:13.5px;color:var(--ink-soft);text-align:center;}
+
+  .player-block{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .player-block label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;margin-bottom:8px;}
+  .player-block label .dot{width:14px;height:14px;border-radius:50%;}
+  textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;resize:vertical;min-height:52px;background:var(--paper);color:var(--ink);}
+  textarea:focus{outline:none;border-color:var(--sage);}
+
+  .emoji-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{padding:6px 11px;border-radius:999px;background:var(--sage-tint);font-size:13px;font-weight:600;color:var(--sage-deep);}
+  .chip.on{background:var(--sage-deep);color:#fff;}
+
+  .qa-block{margin-bottom:16px;}
+  .qa-block .q{font-size:14px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+
+  .insight-field{margin-bottom:12px;}
+  .insight-field .lbl{font-size:13px;font-weight:700;color:var(--sage-deep);margin-bottom:5px;display:block;}
+
+  .wwyd-opt{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:11px 14px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+  .wwyd-opt input{width:17px;height:17px;accent-color:var(--sage-deep);}
+  .wwyd-opt label{font-size:14px;flex:1;}
+
+  .breathe-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 0 6px;}
+  .breathe-circle{
+    width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #C9DAC7, var(--sage));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;
+    animation:breathe 8s ease-in-out infinite;box-shadow:0 8px 30px rgba(76,107,82,.35);
+  }
+  @keyframes breathe{
+    0%{transform:scale(.75);} 37%{transform:scale(1.08);} 50%{transform:scale(1.08);}
+    87%{transform:scale(.75);} 100%{transform:scale(.75);}
+  }
+  .breathe-label{margin-top:16px;color:var(--ink-soft);font-size:13.5px;text-align:center;line-height:1.6;}
+
+  .btn-block{width:100%;text-align:center;}
+
+  /* ---------- ZONE BANNER ---------- */
+  .zone-banner-overlay{
+    position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+    background:rgba(37,48,42,.75);
+  }
+  .zone-banner-card{
+    background:#fff;border-radius:24px;padding:40px 32px;text-align:center;max-width:380px;
+    animation:fadeUp .5s ease both;
+  }
+  .zone-banner-card .em{font-size:46px;display:block;margin-bottom:10px;}
+  .zone-banner-card h2{margin:0 0 10px;font-size:26px;}
+  .zone-banner-card p{color:var(--ink-soft);line-height:1.7;font-size:14.5px;margin-bottom:22px;}
+
+  /* ---------- FINAL / REWARD ---------- */
+  #screen-final .wrap, #screen-reward .wrap{max-width:560px;text-align:center;padding-top:20px;}
+  .reward-badge{font-size:70px;margin:10px 0;animation:pop .6s ease both;}
+  @keyframes pop{0%{transform:scale(.4);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+  .zone-checklist{display:flex;flex-direction:column;gap:8px;max-width:280px;margin:20px auto;text-align:left;}
+  .zone-checklist div{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px;}
+  .stars{font-size:15px;color:var(--gold);font-weight:700;margin:16px 0;}
+
+  @media(max-width:480px){
+    .hero h1{font-size:32px;}
+    .sheet{padding:20px 16px 28px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- START SCREEN -->
+  <section id="screen-start" class="screen active">
+    <div class="hero">
+      <span class="hero-mark">🌿</span>
+      <h1>CALM QUEST</h1>
+      <div class="tag">Kenali · Pahami · Hadapi</div>
+      <p>Dalam perjalanan ini, kalian akan menemukan berbagai situasi yang mungkin dekat dengan kehidupan sehari-hari. Ceritakan pengalaman kalian, dengarkan pengalaman teman, dan temukan cara menghadapi situasi bersama.</p>
+      <div class="noanswer">Tidak ada jawaban benar atau salah.</div>
+
+      <div class="player-select">
+        <h3>Pilih Pemain (2–4 orang)</h3>
+        <div class="player-grid" id="player-grid"></div>
+      </div>
+
+      <button class="btn-primary" id="start-btn">MULAI QUEST</button>
+    </div>
+  </section>
+
+  <!-- BOARD SCREEN -->
+  <section id="screen-board" class="screen">
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">🌿 Calm Quest</div>
+        <div class="zone-pill" id="zone-pill">📚 Akademik</div>
+      </div>
+
+      <div class="turn-banner">
+        <div class="who">
+          <span class="dot" id="turn-dot"></span>
+          <span id="turn-label">Pemain 1, giliranmu!</span>
+        </div>
+        <button id="dice-btn"><span id="dice-face">🎲</span>Lempar Dadu</button>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="legend">
+        <span><i class="sw" style="background:var(--z-akademik)"></i>Akademik 1–20</span>
+        <span><i class="sw" style="background:var(--z-pertemanan)"></i>Pertemanan 21–40</span>
+        <span><i class="sw" style="background:var(--z-keluarga)"></i>Keluarga 41–60</span>
+        <span><i class="sw" style="background:var(--z-masadepan)"></i>Masa Depan 61–80</span>
+        <span><i class="sw" style="background:var(--z-medsos)"></i>Media Sosial 81–100</span>
+      </div>
+
+      <div class="players-status" id="players-status"></div>
+    </div>
+  </section>
+
+  <!-- FLOW OVERLAY -->
+  <div class="overlay hidden" id="overlay-flow">
+    <div class="sheet" id="flow-sheet"></div>
+  </div>
+
+  <!-- ZONE BANNER OVERLAY -->
+  <div class="zone-banner-overlay" id="zone-banner-overlay" style="display:none;"></div>
+
+  <!-- FINAL REFLECTION -->
+  <section id="screen-final" class="screen">
+    <div class="wrap">
+      <span class="hero-mark">🌱</span>
+      <h2>Final Reflection</h2>
+      <p style="color:var(--ink-soft);">Kalian sudah melewati lima zona Calm Quest. Sebelum selesai, yuk refleksi bersama.</p>
+      <div id="final-questions" style="text-align:left;margin-top:20px;"></div>
+      <button class="btn-primary btn-block" id="final-submit">SELESAI REFLEKSI</button>
+    </div>
+  </section>
+
+  <!-- REWARD -->
+  <section id="screen-reward" class="screen">
+    <div class="wrap">
+      <div class="reward-badge">🏆</div>
+      <h2>Congratulations!</h2>
+      <p style="color:var(--ink-soft);">Kalian telah menyelesaikan Calm Quest!</p>
+      <p style="color:var(--ink-soft);font-size:14px;">Dalam perjalanan ini kalian telah:</p>
+      <div class="zone-checklist">
+        <div>🧠 Mengenali pikiran</div>
+        <div>❤️ Mengenali perasaan</div>
+        <div>👥 Mendengarkan pengalaman orang lain</div>
+        <div>🔍 Melihat situasi dari sudut pandang lain</div>
+        <div>🎯 Menentukan langkah yang bisa dilakukan</div>
+        <div>🌿 Berlatih mengambil jeda</div>
+      </div>
+      <div class="stars">⭐ +100 Calm Stars</div>
+      <button class="btn-ghost" id="restart-btn">Main Lagi dari Awal</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const ZONES = [
+  {key:'akademik', label:'Akademik', emoji:'📚', range:[1,20], color:'var(--z-akademik)',
+   intro:"Setiap hari punya tantangannya sendiri. Yuk, lihat bagaimana kita menghadapi tekanan belajar."},
+  {key:'pertemanan', label:'Pertemanan', emoji:'🤝', range:[21,40], color:'var(--z-pertemanan)',
+   intro:"Setiap hubungan punya cerita. Yuk, lihat dari sudut pandang yang berbeda."},
+  {key:'keluarga', label:'Keluarga', emoji:'🏠', range:[41,60], color:'var(--z-keluarga)',
+   intro:"Harapan, dukungan, dan hubungan keluarga dapat menghadirkan berbagai perasaan."},
+  {key:'masa_depan', label:'Masa Depan', emoji:'🔮', range:[61,80], color:'var(--z-masadepan)',
+   intro:"Masa depan tidak selalu punya satu jalan. Yuk, temukan langkah yang bisa dimulai hari ini."},
+  {key:'media_sosial', label:'Media Sosial', emoji:'📱', range:[81,100], color:'var(--z-medsos)',
+   intro:"Apa yang kita lihat di layar tidak selalu menggambarkan keseluruhan cerita."},
+];
+
+const SITUATIONS = {
+akademik:[
+{s:"Aku terkadang merasa kurang dan minder ketika melihat teman-temanku lebih cepat memahami materi pelajaran. Sementara itu, aku membutuhkan waktu lebih lama untuk mencerna dan memahami materi. Hal tersebut terkadang membuatku merasa tertinggal dan meragukan kemampuan diriku sendiri.",
+ note:"Mungkin rasanya nggak enak ketika teman sudah paham, sementara kamu masih berusaha memahami dari awal. Apalagi kalau akhirnya muncul pikiran, \u201cKok aku lama banget, ya?\u201d Tapi kamu tidak sedang berlomba dengan mereka. Kamu mungkin memang membutuhkan waktu lebih lama, dan itu tidak apa-apa. Yang sering kita lupa, kita melihat orang lain ketika mereka sudah berhasil memahami sesuatu, tetapi melihat diri sendiri ketika masih berproses. Jadi, untuk sekarang, nggak perlu memaksa diri untuk langsung bisa. Tanya satu hal saja: \u201cApa yang sudah sedikit lebih kupahami dibanding kemarin?\u201d Kalau ada, berarti kamu tetap bergerak."},
+{s:"Aku terkadang merasa tertekan karena sifatku yang perfeksionis. Aku ingin segala sesuatu berjalan dengan sempurna sesuai dengan yang sudah aku rencanakan. Ketika hasilnya tidak sesuai harapan, aku bisa merasa kecewa pada diriku sendiri.",
+ note:"Kamu ingin hasilnya bagus. Itu bukan sesuatu yang salah. Yang melelahkan adalah ketika keinginan untuk melakukan yang terbaik berubah menjadi perasaan bahwa sedikit saja salah berarti semuanya gagal. Kamu boleh melakukan sesuatu dengan baik tanpa harus melakukannya dengan sempurna. Kalau hasilnya belum sesuai harapan, bukan berarti usahamu sia-sia. Coba lihat kembali hasil yang kamu dapatkan dan tanyakan: \u201cApa yang sudah berjalan cukup baik?\u201d Tidak semuanya harus diperbaiki hari ini."},
+{s:"Setiap hari aku merasa khawatir ketika memikirkan tentang akademikku. Aku sering memikirkan nilai, tugas, dan hasil belajarku, sehingga terkadang merasa terbebani dan sulit untuk merasa tenang.",
+ note:"Ada kalanya badan sudah berhenti belajar, tetapi kepala masih terus bekerja. Tugas yang belum selesai, nilai yang belum keluar, ujian berikutnya. Tapi malam ini, misalnya, kamu sedang tidak mengerjakan ujian. Jadi kamu tidak harus menyelesaikan semua kekhawatiran itu sekarang. Tarik napas. Untuk sementara, simpan dulu hal-hal yang belum bisa kamu selesaikan. Besok kamu bisa memikirkannya lagi. Tidak semua masalah harus selesai malam ini."},
+{s:"Aku terkadang merasa stres karena takut hasil akademikku tidak sesuai dengan harapan. Aku khawatir nilai dan pencapaianku tidak cukup baik, sehingga sering merasa terbebani oleh ekspektasi terhadap diriku sendiri.",
+ note:"Kadang yang paling melelahkan bukan tugasnya, tetapi bayangan tentang hasilnya. Tapi nilai adalah hasil dari satu pekerjaan atau satu ujian. Nilai bukan ringkasan seluruh kemampuanmu. Kalau hasilnya nanti belum sesuai harapan, kamu masih bisa belajar dari sana. Untuk sekarang, tidak perlu menghukum diri sendiri karena sesuatu yang bahkan belum terjadi. Kerjakan bagianmu. Sisanya, biarkan datang pada waktunya."},
+{s:"Aku terkadang merasa tertekan ketika dalam satu hari ada lebih dari satu ujian. Aku harus membagi waktu untuk belajar beberapa materi sekaligus, sehingga tidak bisa fokus sepenuhnya pada satu ujian. Hal itu terkadang membuat persiapanku kurang maksimal dan berdampak pada nilai.",
+ note:"Wajar kalau kamu merasa kewalahan ketika beberapa ujian datang bersamaan. Bukan berarti kamu tidak mampu. Memang ada banyak hal yang harus dipikirkan dalam waktu yang terbatas. Jadi jangan memaksa otak untuk memikirkan semuanya sekaligus. Pilih satu. Pelajari satu. Selesaikan satu. Setelah itu, baru pindah ke yang berikutnya. Kamu tidak harus membawa semua ujian itu di kepala pada saat yang sama."},
+{s:"Aku terkadang merasa stres ketika menghadapi deadline tugas, terutama saat aku ragu apakah mampu menyelesaikannya dengan baik. Tekanan waktu dan rasa tidak percaya diri terhadap kemampuanku membuat tugas terasa semakin berat.",
+ note:"Kadang deadline membuat tugas terasa jauh lebih besar daripada sebenarnya. Belum mulai saja sudah muncul pikiran, \u201cKayaknya aku nggak akan bisa selesai.\u201d Kalau sekarang tugas itu terasa terlalu berat, jangan pikirkan seluruhnya. Buka dulu. Baca dulu. Kerjakan bagian yang paling mudah. Kamu nggak perlu yakin bisa menyelesaikan semuanya untuk mulai mengerjakannya. Cukup mulai."},
+{s:"Aku terkadang merasa malas untuk belajar atau mengerjakan tugas, terutama ketika materi terasa sulit atau tugas yang harus dikerjakan terlalu banyak. Akibatnya, aku bisa menunda pekerjaan dan semakin tertekan ketika deadline semakin dekat.",
+ note:"Mungkin kamu bukan benar-benar malas. Mungkin tugasnya terasa terlalu banyak, materinya terlalu sulit, atau kamu sudah membayangkan betapa melelahkannya mengerjakan semua itu sampai akhirnya memilih menundanya. Jadi kali ini jangan menunggu sampai merasa siap. Buka tugasnya dan kerjakan lima menit saja. Kalau setelah lima menit masih ingin berhenti, kamu boleh menentukan langkah berikutnya. Yang penting, jangan biarkan tugas yang belum dimulai terus membesar di kepalamu."},
+{s:"Aku sering merasa seperti terus dikejar oleh target akademik. Rasanya waktu untuk belajar selalu kurang karena terlalu banyak hal yang harus dicapai dan diselesaikan. Hal itu membuatku merasa terburu-buru dan sulit menikmati proses belajar.",
+ note:"Kalau setiap hari ada target baru, lama-lama belajar memang bisa terasa seperti sesuatu yang tidak pernah selesai. Tapi kamu bukan mesin yang harus terus menghasilkan sesuatu. Kamu boleh berhenti sebentar. Kamu boleh punya hari yang biasa saja. Dan istirahat tidak menghapus semua usaha yang sudah kamu lakukan. Hari ini tidak harus menjadi hari paling produktif dalam hidupmu."},
+],
+pertemanan:[
+{s:"Aku sering memikirkan bagaimana orang lain memandang diriku. Hampir setiap saat aku merasa khawatir tentang apa yang mereka pikirkan atau katakan tentangku, sehingga terkadang aku jadi terlalu memikirkan cara bersikap di depan mereka.",
+ note:"Capek juga ya, kalau harus terus memikirkan bagaimana dirimu terlihat di mata orang lain. Tapi kamu tidak akan pernah benar-benar bisa mengendalikan pikiran semua orang. Dan kamu tidak perlu melakukannya. Kalau kamu sudah bersikap dengan baik, itu sudah cukup. Kamu boleh menjadi dirimu tanpa terus-menerus mengoreksi setiap gerakanmu."},
+{s:"Aku merasa tidak nyaman ketika ada rumor tentang diriku yang mulai menyebar. Aku khawatir orang lain akan mempercayainya dan memandangku berbeda, meskipun rumor tersebut belum tentu benar.",
+ note:"Mendengar ada rumor tentang diri sendiri memang bisa bikin pikiran ke mana-mana. Tapi ada satu hal yang perlu diingat: rumor bukan fakta hanya karena banyak orang membicarakannya. Kalau ada sesuatu yang memang perlu diluruskan, kamu bisa menghadapinya. Kalau tidak, kamu tidak perlu menghabiskan energimu untuk meyakinkan semua orang."},
+{s:"Aku berusaha menghindari masalah dalam pertemanan, tetapi rasa tidak nyaman yang dipendam justru membuatku semakin terbebani. Perbedaan seperti harapan yang tidak sesuai, perubahan suasana hati, kurangnya informasi, preferensi, masalah pribadi, standar, dan pandangan moral terkadang membuatku sulit memahami teman-temanku.",
+ note:"Teman tidak selalu berpikir seperti kita. Kadang mereka punya cara bicara yang berbeda, standar yang berbeda, atau melihat suatu masalah dengan cara yang sama sekali berbeda. Perbedaan tidak selalu berarti hubunganmu bermasalah. Kadang cukup dengan memahami: \u201cDia berbeda denganku. Dan itu tidak apa-apa.\u201d Kamu tidak harus selalu setuju untuk tetap bisa berteman."},
+{s:"Aku terkadang bercanda terlalu berlebihan tanpa menyadari bahwa perkataanku bisa menyakiti orang lain. Setelahnya, aku sering merasa bersalah dan memikirkan apakah candaan yang aku sampaikan sudah melewati batas.",
+ note:"Kalau setelah bercanda kamu sadar bahwa perkataanmu mungkin menyakiti teman, rasa bersalah itu wajar. Justru itu menunjukkan bahwa kamu peduli. Kalau memang salah, kamu bisa meminta maaf. Sesederhana itu. Kamu tidak harus terus menghukum dirimu sendiri setelah memperbaikinya. Belajar dari kesalahan lebih berguna daripada terus menyalahkan diri karena kesalahan tersebut."},
+{s:"Aku terkadang khawatir tidak memiliki koneksi yang cukup dengan orang lain. Aku takut sulit menemukan teman yang benar-benar cocok dan memahami diriku, sehingga terkadang merasa cemas tentang hubungan pertemananku di masa depan.",
+ note:"Mungkin sekarang kamu belum menemukan banyak orang yang benar-benar cocok. Dan itu tidak berarti kamu akan sendirian selamanya. Pertemanan juga tidak selalu datang sekaligus. Kadang dimulai dari obrolan kecil, duduk bersama, mengerjakan sesuatu bersama, lalu perlahan menjadi dekat. Kamu tidak perlu terburu-buru menemukan \u201corang yang tepat\u201d."},
+{s:"Aku terkadang merasa kesulitan menghadapi perubahan mood teman-temanku saat bergaul. Ketika suasana hati mereka berubah, aku jadi bingung harus bersikap seperti apa agar tidak salah memahami atau memperburuk keadaan.",
+ note:"Temanmu tiba-tiba diam. Kamu langsung berpikir, \u201cAku salah apa?\u201d Padahal bisa saja mereka sedang lelah, punya masalah sendiri, atau memang sedang tidak ingin banyak bicara. Jadi sebelum menyalahkan diri sendiri, beri sedikit ruang untuk kemungkinan lain. Tidak semua perubahan sikap orang lain disebabkan olehmu. Kamu boleh peduli tanpa harus bertanggung jawab atas suasana hati semua orang."},
+{s:"Aku terkadang merasa seperti berada di luar lingkaran pertemanan kelas ketika tidak memahami apa yang sedang terjadi atau tidak mengetahui informasi yang dibicarakan. Hal itu membuatku cukup cemas dan takut tertinggal dari teman-teman.",
+ note:"Melihat teman-teman membicarakan sesuatu yang tidak kamu tahu memang bisa membuat hati sedikit nggak enak. Apalagi ketika muncul pikiran, \u201cJangan-jangan aku sudah nggak dianggap.\u201d Tapi tidak mengetahui satu informasi bukan berarti kamu kehilangan tempat. Kalau memang penasaran, tanyakan. Tidak perlu menebak-nebak terlalu jauh. Kadang kita merasa dijauhkan, padahal sebenarnya hanya sedang melewatkan satu momen."},
+{s:"Aku terkadang takut ketika perlakuanku yang menurutku biasa dan normal justru dianggap salah oleh orang lain. Aku khawatir orang lain memiliki pandangan yang berbeda terhadap sikapku, sehingga aku jadi terlalu memikirkan bagaimana harus bertindak.",
+ note:"Kamu mungkin terlalu sering memikirkan, \u201cKalau orang lain menganggap tindakanku salah bagaimana?\u201d Kamu memang perlu mempertimbangkan perasaan orang lain. Tapi kamu juga tidak mungkin memenuhi standar semua orang. Kalau kamu sudah berusaha bersikap baik dan tidak bermaksud menyakiti, kamu tidak perlu terus mencari-cari kesalahan dalam dirimu. Tidak semua ketidaksetujuan berarti kamu melakukan sesuatu yang salah."},
+],
+keluarga:[
+{s:"Aku merasa cukup cemas karena takut mengecewakan orang tuaku. Mereka memiliki harapan besar terhadapku, tetapi terkadang aku merasa tidak mampu memenuhi semuanya. Aku ingin membuat mereka bangga, tetapi di sisi lain aku juga merasa terbebani dengan harapan tersebut.",
+ note:"Kamu ingin membuat orang tua bangga. Itu wajar. Tapi mungkin selama ini kamu terlalu sering mengartikan \u201cmembuat mereka bangga\u201d sebagai \u201caku tidak boleh gagal.\u201d Padahal orang tua yang menyayangimu kemungkinan tidak hanya melihat hasil akhirnya. Mereka juga melihat bagaimana kamu berusaha. Kalau suatu hari kamu gagal, kamu tetap anak mereka. Kegagalanmu tidak membuatmu menjadi seseorang yang mengecewakan."},
+{s:"Aku pernah merasa tertekan karena adanya harapan dari keluargaku. Misalnya, saat ujian aku diharapkan mendapatkan nilai yang bagus atau harus masuk ke universitas ternama. Aku ingin memenuhi harapan mereka, tetapi terkadang hal itu membuatku merasa cemas dan takut gagal.",
+ note:"Harapan keluarga kadang terdengar seperti motivasi. Tapi kalau terlalu sering dipikirkan, harapan itu bisa berubah menjadi beban. Kamu boleh punya keinginan sendiri. Kamu juga boleh berdiskusi dengan keluargamu ketika pilihanmu berbeda. Memenuhi harapan orang tua bukan berarti harus kehilangan suara sendiri. Masa depanmu juga merupakan hidup yang akan kamu jalani."},
+{s:"Aku pernah merasa tidak nyaman ketika dibandingkan dengan orang lain oleh keluarga. Misalnya, ketika mereka membandingkan nilai, prestasi, atau pencapaianku dengan teman atau saudara. Hal itu terkadang membuatku merasa kurang percaya diri.",
+ note:"Dibandingkan dengan saudara atau teman memang bisa membuat apa yang sudah kamu lakukan terasa tidak cukup. Coba berhenti sebentar dari perlombaan itu. Lihat dirimu sendiri. Apa yang sudah kamu capai yang dulu belum bisa kamu lakukan? Itu juga layak dihargai."},
+{s:"Orang tuaku sebenarnya tidak pernah memaksaku, tetapi mereka sangat percaya kepadaku. Karena itu, terkadang aku merasa tidak enak jika tidak bisa memenuhi harapan mereka. Aku takut mengecewakan mereka meskipun mereka tidak pernah menuntutku secara langsung.",
+ note:"Kadang justru karena orang tua tidak menuntut, kita membuat tuntutan sendiri. \u201cMereka sudah percaya sama aku. Masa aku gagal?\u201d Tapi kepercayaan orang tua bukan kontrak bahwa kamu harus selalu berhasil. Mereka percaya padamu bukan karena kamu tidak pernah gagal. Kamu tetap boleh salah. Kamu tetap boleh mencoba lagi."},
+{s:"Keluargaku selalu mendorongku untuk menjadi lebih baik dari generasi sebelumnya. Hampir semua anggota keluargaku memiliki keahlian dan prestasi di bidang masing-masing. Hal itu terkadang membuatku merasa harus mencapai sesuatu yang besar agar bisa menyamai mereka.",
+ note:"Punya keluarga yang hebat bisa menjadi sesuatu yang membanggakan. Tapi kalau setiap pencapaian mereka berubah menjadi standar untuk dirimu, rasanya bisa berat. Kamu tidak harus menjadi versi lain dari mereka. Ambil hal baik yang mereka ajarkan, tetapi buat jalanmu sendiri. Kamu tidak datang ke dunia untuk mengulang pencapaian orang lain."},
+{s:"Keluargaku tidak pernah menetapkan target atau tujuan yang tinggi untukku. Namun, justru karena tidak adanya tuntutan tersebut, aku terkadang merasa memiliki tekanan yang lebih besar dari dalam diri sendiri. Aku ingin membuktikan bahwa kepercayaan yang mereka berikan kepadaku tidak sia-sia.",
+ note:"Tidak ada yang memaksamu. Tapi kamu sendiri yang terus berkata, \u201cAku harus membuktikan bahwa aku bisa.\u201d Coba bayangkan kalau temanmu berada di posisi yang sama. Apakah kamu akan menuntutnya sekeras kamu menuntut dirimu sendiri? Mungkin tidak. Jadi kali ini, beri dirimu sedikit kelonggaran. Kamu tidak harus membuktikan semuanya sekaligus."},
+{s:"Keluargaku hanya ingin aku melakukan yang terbaik tanpa menetapkan batas atau tujuan tertentu. Karena itu, sejak dulu aku lebih banyak membentuk ekspektasi untuk diriku sendiri.",
+ note:"Ingin melakukan yang terbaik adalah hal yang baik. Tapi \u201cyang terbaik\u201d tidak harus berarti maksimal setiap saat. Ada hari ketika kamu bisa memberikan 100%. Ada hari ketika kamu hanya punya 60%. Dan 60% pada hari yang berat tetap merupakan usaha. Kamu tetap berharga bahkan ketika performamu sedang tidak maksimal."},
+],
+masa_depan:[
+{s:"Menurutku, masa depan sangat penting untuk menentukan arah hidupku. Karena itu, aku terkadang merasa cemas ketika memikirkannya, terutama karena takut mengambil keputusan yang salah dan menyesal di kemudian hari.",
+ note:"Memikirkan masa depan memang bisa membuat takut, karena kamu ingin memilih dengan benar. Tapi kamu tidak bisa mendapatkan kepastian sebelum menjalani pilihanmu. Jadi jangan menunggu sampai yakin 100%. Cari informasi, pertimbangkan baik-baik, lalu pilih yang paling masuk akal untukmu sekarang. Kamu boleh belajar sambil berjalan."},
+{s:"Aku terkadang bingung harus mulai dari mana ketika memikirkan masa depanku. Ada banyak hal yang ingin dicapai dan banyak pilihan yang bisa diambil, sehingga aku merasa kesulitan menentukan langkah pertama.",
+ note:"Kadang bukan karena kamu tidak punya tujuan. Justru karena terlalu banyak yang ingin dicapai sampai akhirnya tidak tahu harus mulai dari mana. Jangan pikirkan seluruh perjalanan. Pikirkan langkah pertama saja. Satu informasi yang perlu dicari, satu kemampuan yang perlu dipelajari, satu hal yang bisa dicoba. Itu sudah cukup untuk hari ini."},
+{s:"Aku terkadang bingung dalam menentukan jurusan dan universitas yang ingin kupilih. Ada banyak pilihan dan pertimbangan yang harus dipikirkan, sehingga aku khawatir salah memilih dan memengaruhi masa depanku.",
+ note:"Wajar kalau memilih jurusan terasa besar, rasanya seperti satu keputusan sekarang akan menentukan seluruh hidupmu. Tapi pilihanmu tidak harus sempurna. Cari yang sesuai dengan minatmu, kemampuanmu, kondisi keluargamu, dan tujuan yang ingin kamu bangun. Kamu sedang memilih langkah berikutnya, bukan menentukan seluruh hidupmu dalam satu hari."},
+{s:"Aku merasa masa depan itu tidak pasti dan sangat bergantung pada diriku sendiri. Sampai sekarang aku masih ragu tentang apa yang sebenarnya ingin kulakukan di masa depan, meskipun aku sudah memikirkannya sejak kecil.",
+ note:"Kalau sampai sekarang kamu masih belum yakin, tidak apa-apa. Serius. Ada orang yang sudah tahu sejak kecil. Ada juga yang baru menemukan arahnya setelah mencoba banyak hal. Tidak ada batas usia untuk menemukan sesuatu yang ternyata cocok untukmu. Kamu tidak terlambat. Kamu masih mencari."},
+{s:"Aku terkadang takut masa depanku tidak berjalan lancar atau tidak sesuai dengan rencana yang sudah kubuat. Aku khawatir jika sesuatu berjalan di luar kendali, aku tidak akan tahu harus mengambil langkah seperti apa selanjutnya.",
+ note:"Punya rencana membuat kita merasa lebih aman. Masalahnya, hidup tidak selalu mengikuti rencana. Kalau suatu hari rencanamu berubah, itu tidak berarti semuanya gagal. Mungkin kamu hanya perlu membuat rencana baru. Kamu tidak harus tahu apa yang akan terjadi. Kamu hanya perlu percaya bahwa kamu bisa menghadapi apa yang datang."},
+{s:"Aku memiliki cita-cita yang ingin kucapai di masa depan. Cita-cita tersebut menjadi tantangan bagiku untuk terus berkembang, belajar, dan berusaha menjadi lebih baik agar bisa mencapainya.",
+ note:"Punya cita-cita adalah hal yang menyenangkan. Tapi jangan sampai cita-cita yang seharusnya memberi arah justru berubah menjadi tekanan. Tidak perlu mengejar semuanya sekaligus. Pilih satu kemampuan, latih sedikit demi sedikit. Nanti kamu akan melihat sendiri sejauh apa kamu sudah berjalan. Cita-cita itu tujuan, kamu tidak harus sampai hari ini."},
+{s:"Aku terkadang takut memilih jalan yang salah untuk masa depanku. Ada banyak pilihan dan keputusan yang harus diambil, sehingga aku khawatir keputusan yang kubuat sekarang akan memengaruhi masa depanku nanti.",
+ note:"Kalau kamu takut salah memilih, itu mungkin karena pilihan tersebut memang penting bagimu. Tapi ingat: memilih bukan berarti mengunci seluruh hidupmu. Ada keputusan yang bisa diperbaiki, ada jalan yang bisa berubah, ada hal baru yang bisa ditemukan di tengah perjalanan. Jadi pilih dengan informasi yang kamu punya sekarang. Tidak perlu mengetahui semuanya."},
+{s:"Aku terkadang merasa tidak bisa berharap banyak dari bakat yang kumiliki. Aku khawatir bakat tersebut tidak akan berguna di masa depan, tetapi entah mengapa aku masih ingin terus mempertahankannya dan mengembangkannya.",
+ note:"Mungkin kamu pernah bertanya, \u201cBuat apa aku terus mengembangkan ini kalau belum tentu berguna?\u201d Tapi kamu tidak harus tahu manfaatnya sekarang. Kalau sesuatu membuatmu tertarik dan membuatmu ingin terus belajar, mungkin itu sudah cukup menjadi alasan untuk mempertahankannya. Tidak semua hal yang berharga harus langsung menghasilkan sesuatu."},
+{s:"Aku terkadang bingung bagaimana cara mempersiapkan diri agar bisa masuk ke universitas top, baik PTN maupun PTLN. Aku tahu persaingannya cukup ketat, tetapi masih belum yakin harus mulai dari mana.",
+ note:"Universitas yang terlihat sangat kompetitif memang bisa terasa jauh, apalagi kalau kamu belum tahu harus mulai dari mana. Jangan mulai dari pertanyaan \u201cBagaimana kalau aku tidak lolos?\u201d Mulai dari \u201cApa yang bisa kupersiapkan minggu ini?\u201d Cari informasi, catat persyaratan, susun jadwal, satu per satu. Kamu tidak perlu mengejar seluruh masa depan sekaligus."},
+{s:"Aku terkadang overthinking dan takut salah memilih jurusan atau universitas. Aku khawatir jika memilih universitas yang kurang bergengsi atau jurusan yang kurang tepat, hal itu akan mempersulitku mendapatkan pekerjaan di masa depan.",
+ note:"Takut salah pilih itu wajar. Kamu ingin masa depanmu baik, jadi tentu kamu ingin membuat keputusan yang benar. Tapi universitas yang paling terkenal belum tentu menjadi pilihan yang paling tepat untuk setiap orang. Dan pilihan yang sederhana bukan berarti pilihan yang buruk. Jangan memilih hanya karena takut terlihat kurang dari orang lain. Pilih sesuatu yang memang ingin kamu jalani."},
+],
+media_sosial:[
+{s:"Aku terkadang merasa cemas ketika melihat pencapaian atau kehidupan teman-temanku di media sosial. Mereka terlihat memiliki prestasi, kehidupan yang menyenangkan, atau melakukan banyak hal menarik, sehingga aku terkadang membandingkan diriku sendiri.",
+ note:"Scroll sebentar, lihat teman dapat prestasi, lihat orang liburan, lalu tanpa sadar melihat hidup sendiri dan merasa \u201cKok hidupku biasa banget?\u201d Tapi kamu sedang membandingkan kehidupan nyata milikmu dengan potongan kehidupan orang lain. Itu tidak adil untuk dirimu sendiri. Kamu tidak melihat seluruh cerita mereka, sama seperti mereka juga tidak melihat seluruh ceritamu."},
+{s:"Aku terkadang merasa khawatir ketika mengunggah sesuatu di media sosial. Aku sering memikirkan apakah orang lain akan menyukai unggahanku, memberikan komentar negatif, atau justru menganggapku aneh.",
+ note:"Kadang sebelum menekan tombol \u201cunggah\u201d, pikiran sudah membuat banyak kemungkinan. Tapi sebuah unggahan tidak menentukan nilai dirimu. Kalau kamu memang ingin membagikannya, bagikan. Kalau tidak ingin, tidak perlu. Kamu tidak harus mendapatkan persetujuan semua orang untuk merasa nyaman dengan sesuatu yang kamu sukai."},
+{s:"Aku terkadang merasa tertinggal ketika melihat teman-temanku berkumpul atau melakukan kegiatan bersama melalui media sosial. Ketika mengetahui bahwa aku tidak ikut dalam suatu kegiatan, aku bisa merasa takut kehilangan momen.",
+ note:"Melihat teman berkumpul tanpa kamu memang bisa terasa menusuk sedikit, apalagi kalau kamu baru tahu dari story mereka. Tapi satu story tidak bisa menjelaskan seluruh hubunganmu dengan mereka. Jadi sebelum menyimpulkan \u201cAku sudah tidak dianggap\u201d, beri dirimu kesempatan untuk melihat situasinya lebih lengkap."},
+{s:"Aku terkadang merasa tidak percaya diri ketika melihat penampilan orang lain di media sosial. Aku menyadari bahwa apa yang ditampilkan belum tentu menggambarkan keadaan sebenarnya, tetapi terkadang aku tetap membandingkan penampilan diriku dengan mereka.",
+ note:"Kamu tahu foto di media sosial tidak selalu nyata, ada filter, pencahayaan, pose. Tapi tetap saja kadang merasa kurang. Itu manusiawi. Kalau hari ini kamu tidak merasa cantik atau menarik, itu tidak membuatmu menjadi kurang berharga. Kamu boleh ada tanpa harus terlihat sempurna."},
+{s:"Aku terkadang merasa cemas ketika pesan atau unggahanku tidak mendapatkan respons seperti yang kuharapkan. Misalnya, ketika seseorang tidak membalas pesan atau hanya memberikan respons singkat, aku bisa mulai memikirkan apakah aku melakukan sesuatu yang salah.",
+ note:"Pesan belum dibalas, lima menit, sepuluh menit, satu jam. Lalu pikiran mulai membuat cerita sendiri: \u201cDia marah? Aku salah ngomong?\u201d Tapi kamu belum tahu alasannya. Mungkin dia sibuk, mungkin lupa. Tidak semua pesan yang belum dibalas membutuhkan jawaban dari pikiranmu."},
+{s:"Aku terkadang terlalu memikirkan komentar atau tanggapan orang lain terhadap unggahanku. Bahkan ketika sebenarnya tidak ada masalah, aku bisa terus mengingat komentar tersebut dan bertanya-tanya apakah orang lain memiliki penilaian negatif terhadap diriku.",
+ note:"Kadang satu komentar bisa tinggal lebih lama di kepala daripada sepuluh komentar baik. Kalau komentarnya memang memberikan masukan, ambil yang berguna. Kalau tidak, kamu boleh melepaskannya. Tidak semua kata orang lain harus kamu bawa pulang."},
+{s:"Aku terkadang merasa sulit berhenti menggunakan media sosial ketika sedang melihat berbagai informasi atau unggahan orang lain. Awalnya aku hanya ingin melihat sebentar, tetapi akhirnya menghabiskan waktu lebih lama dari yang direncanakan.",
+ note:"Awalnya cuma mau lihat sebentar, tiba-tiba sudah satu jam, lalu muncul rasa bersalah. Jadi jangan hanya mengandalkan \u201cAku harus berhenti.\u201d Buat batas yang jelas, misalnya setelah 15 menit, letakkan ponsel dan lakukan sesuatu yang lain. Tidak harus langsung berubah total. Cukup mulai memberi jeda pada dirimu sendiri."},
+{s:"Aku terkadang merasa khawatir ketika melihat berita atau informasi negatif di media sosial. Meskipun informasi tersebut belum tentu berkaitan langsung denganku, aku bisa terus memikirkannya dan membayangkan kemungkinan buruk yang mungkin terjadi.",
+ note:"Kadang satu berita buruk bisa membuat kepala terus memikirkan kemungkinan-kemungkinan buruk lainnya, padahal berita itu bahkan tidak terjadi di dekatmu. Kalau informasi tersebut tidak membutuhkan tindakan darimu sekarang, kamu boleh berhenti melihatnya. Kamu sedang berada di sini, sekarang, bukan di semua kemungkinan buruk yang muncul di kepalamu."},
+{s:"Aku terkadang merasa harus mengikuti tren atau mengetahui hal-hal yang sedang ramai dibicarakan di media sosial agar tidak merasa tertinggal dari teman-teman.",
+ note:"Ada saja yang sedang viral. Kalau tidak tahu, rasanya seperti tertinggal. Tapi kamu tidak mungkin mengetahui semuanya, dan kamu tidak harus tahu semuanya. Kalau ada sesuatu yang memang menarik, ikuti. Kalau tidak, lewatkan saja. Kamu tetap menjadi bagian dari lingkunganmu meskipun tidak mengikuti setiap hal yang sedang ramai."},
+{s:"Aku terkadang memikirkan kembali unggahan atau percakapan yang sudah terjadi di media sosial. Aku bisa bertanya-tanya apakah kata-kata yang kugunakan sudah tepat, atau apakah seharusnya aku tidak mengirim atau mengunggah sesuatu tersebut.",
+ note:"Sudah dikirim, sudah diunggah, tapi pikiran belum selesai. \u201cTadi kata-kataku salah nggak?\u201d Kalau memang ada yang perlu diperbaiki, kamu bisa memperbaikinya. Tapi kalau tidak ada apa-apa, kamu tidak perlu terus mengulang percakapan itu di kepala. Sudah terjadi, kamu sudah melakukan yang kamu bisa. Sekarang, boleh dilepaskan."},
+],
+};
+
+const WWYD_OPTIONS = {
+  akademik:["Membuat target yang lebih realistis","Membagi tugas menjadi bagian kecil","Berlatih terlebih dahulu","Meminta bantuan","Beristirahat sebentar lalu melanjutkan","Mencoba kembali setelah melakukan kesalahan"],
+  pertemanan:["Membicarakan langsung dengan orang yang bersangkutan","Memberi diri waktu sebelum bereaksi","Mencari tahu fakta sebelum menyimpulkan","Meminta maaf jika memang diperlukan","Menerima bahwa tidak semua orang harus cocok","Bercerita ke teman/orang dewasa yang dipercaya"],
+  keluarga:["Mengobrol terbuka dengan orang tua","Menetapkan ekspektasi yang realistis untuk diri sendiri","Menghargai usaha yang sudah dilakukan, bukan hanya hasil","Meminta dukungan tanpa merasa bersalah","Mengingat bahwa kegagalan bukan akhir dari segalanya","Memberi diri waktu untuk beradaptasi"],
+  masa_depan:["Mencari informasi lebih lanjut sebelum memutuskan","Membuat langkah kecil dulu, bukan rencana besar sekaligus","Berdiskusi dengan orang yang berpengalaman","Menerima bahwa rencana bisa berubah","Fokus pada satu keputusan dalam satu waktu","Mengizinkan diri untuk belum yakin"],
+  media_sosial:["Membatasi waktu penggunaan media sosial","Mengingat bahwa unggahan tidak mewakili keseluruhan cerita","Berhenti scrolling dan melakukan aktivitas lain","Tidak langsung menyimpulkan dari respons orang lain","Fokus pada kehidupan nyata di sekitar","Melepaskan pikiran berulang tentang unggahan yang sudah lewat"],
+};
+
+const PEER_QUESTIONS = [
+  "Siapa yang pernah mengalami situasi seperti ini? Ceritakan pengalamannya.",
+  "Waktu itu kondisinya bagaimana? Apa yang membuat situasi tersebut terasa sulit?",
+  "Waktu itu, apa yang kamu lakukan untuk menghadapinya?",
+  "Setelah dipikirkan sekarang, ada nggak sesuatu yang kamu sesali karena tidak dilakukan atau justru dilakukan?",
+  "Kalau menghadapi situasi yang sama lagi, apa yang ingin kalian lakukan dengan berbeda?",
+  "Setelah mendengar cerita teman-teman, menurut kalian apa tips yang bisa membantu menghadapi situasi seperti ini?",
+];
+
+const EMOTIONS = ["😊 Tenang","😟 Cemas","😨 Takut","😣 Tertekan","😔 Sedih","😡 Kesal","😳 Malu","😐 Biasa saja"];
+
+const PLAYER_DEFS = [
+  {id:0, name:"Pemain 1", emoji:"🟣", color:"#8C7FA6"},
+  {id:1, name:"Pemain 2", emoji:"🔵", color:"#5B87A6"},
+  {id:2, name:"Pemain 3", emoji:"🟢", color:"#6E9A6B"},
+  {id:3, name:"Pemain 4", emoji:"🟠", color:"#CC8A45"},
+];
+
+const FINAL_QUESTIONS = [
+  "Dari semua situasi yang kalian temui, mana yang paling berkesan?",
+  "Apa yang kalian pelajari dari pengalaman teman-teman kalian?",
+  "Kalau menghadapi situasi serupa di kehidupan nyata, apa yang ingin kalian coba lakukan?",
+  "Apa satu hal yang ingin kalian ingat setelah menyelesaikan Calm Quest?",
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let state = {
+  players: [],           // selected player ids in order
+  positions: {},          // id -> square number (0 = start)
+  currentTurn: 0,          // index into state.players
+  usedSituations: {akademik:[], pertemanan:[], keluarga:[], masa_depan:[], media_sosial:[]},
+  seenZoneBanner: {},
+  currentEncounter: null, // {zoneKey, idx, stepIndex, data:{...}}
+  finished: false,
+};
+
+const STEP_ORDER = ['situation','metoo','thought','emotion','peer','insight','note','reflect','wwyd','feedback','breathe'];
+
+/* ============================================================
+   INIT — player selection
+   ============================================================ */
+const grid = document.getElementById('player-grid');
+let selectedPlayers = [0,1]; // default 2 players
+function renderPlayerGrid(){
+  grid.innerHTML = '';
+  PLAYER_DEFS.forEach(p=>{
+    const sel = selectedPlayers.includes(p.id);
+    const el = document.createElement('div');
+    el.className = 'player-chip' + (sel? ' selected':'');
+    el.innerHTML = `<span class="dot" style="background:${p.color}"></span><span class="name">${p.emoji} ${p.name.replace('Pemain ','P')}</span>`;
+    el.onclick = ()=>{
+      if(sel){
+        if(selectedPlayers.length>2) selectedPlayers = selectedPlayers.filter(x=>x!==p.id);
+      } else {
+        if(selectedPlayers.length<4) selectedPlayers.push(p.id);
+      }
+      renderPlayerGrid();
+    };
+    grid.appendChild(el);
+  });
+}
+renderPlayerGrid();
+
+document.getElementById('start-btn').onclick = ()=>{
+  state.players = [...selectedPlayers].sort((a,b)=>a-b);
+  state.players.forEach(id=> state.positions[id] = 0);
+  state.currentTurn = 0;
+  show('screen-board');
+  renderBoard();
+  renderTurn();
+  renderPlayersStatus();
+};
+
+/* ============================================================
+   SCREEN SWITCH
+   ============================================================ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ============================================================
+   BOARD RENDER
+   ============================================================ */
+function zoneOf(sq){
+  return ZONES.find(z=> sq>=z.range[0] && sq<=z.range[1]) || ZONES[0];
+}
+function situationSquares(zone){
+  const [start,end] = zone.range;
+  const len = end-start+1;
+  const bank = SITUATIONS[zone.key].length;
+  const out = [];
+  for(let i=0;i<bank;i++){
+    out.push(start + Math.round((i+0.5)*(len/bank)) - 1);
+  }
+  return out;
+}
+function buildRows(){
+  const rows = [];
+  for(let r=0;r<10;r++){
+    const blockStart = (9-r)*10+1;
+    let squares = [];
+    for(let i=0;i<10;i++) squares.push(blockStart+i);
+    if((9-r)%2===1) squares.reverse();
+    rows.push(squares);
+  }
+  return rows;
+}
+function renderBoard(){
+  const boardEl = document.getElementById('board');
+  boardEl.innerHTML = '';
+  const rows = buildRows();
+  const sitSquares = {};
+  ZONES.forEach(z=> situationSquares(z).forEach(sq=> sitSquares[sq]=true));
+
+  rows.flat().forEach(sqNum=>{
+    const z = zoneOf(sqNum);
+    const div = document.createElement('div');
+    div.className = 'sq' + (sitSquares[sqNum] ? ' situation' : '');
+    div.style.background = z.color;
+    div.style.opacity = sqNum===100? '1':'0.85';
+    div.innerHTML = `<span class="num">${sqNum}</span><span class="pawns-on" id="pawns-${sqNum}"></span>`;
+    boardEl.appendChild(div);
+  });
+  paintPawns();
+}
+function paintPawns(){
+  document.querySelectorAll('.pawns-on').forEach(e=> e.innerHTML='');
+  state.players.forEach(id=>{
+    const pos = state.positions[id];
+    const sq = pos===0? 1 : pos;
+    const target = document.getElementById('pawns-'+sq);
+    if(target){
+      const p = PLAYER_DEFS[id];
+      const dot = document.createElement('span');
+      dot.className='pawn-mini';
+      dot.style.background = p.color;
+      target.appendChild(dot);
+    }
+  });
+}
+function renderPlayersStatus(){
+  const el = document.getElementById('players-status');
+  el.innerHTML = state.players.map(id=>{
+    const p = PLAYER_DEFS[id];
+    const pos = state.positions[id];
+    return `<div class="p-status"><span class="dot" style="background:${p.color}"></span>${p.emoji} ${p.name} — kotak ${pos}</div>`;
+  }).join('');
+}
+function renderTurn(){
+  const id = state.players[state.currentTurn];
+  const p = PLAYER_DEFS[id];
+  document.getElementById('turn-dot').style.background = p.color;
+  document.getElementById('turn-label').textContent = `${p.name}, giliranmu!`;
+  const pos = state.positions[id];
+  const z = zoneOf(pos===0?1:pos);
+  document.getElementById('zone-pill').textContent = `${z.emoji} ${z.label}`;
+}
+
+/* ============================================================
+   DICE / MOVE
+   ============================================================ */
+document.getElementById('dice-btn').onclick = rollDice;
+function rollDice(){
+  try{
+    const btn = document.getElementById('dice-btn');
+    btn.disabled = true;
+    const roll = 1 + Math.floor(Math.random()*6);
+    document.getElementById('dice-face').textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][roll-1];
+    const id = state.players[state.currentTurn];
+    const pos = Math.min(100, state.positions[id] + roll);
+    state.positions[id] = pos;
+    paintPawns();
+    renderPlayersStatus();
+    afterMove(id,pos);
+  }catch(err){
+    showFatalError('rollDice', err);
+  }
+}
+
+function showFatalError(where, err){
+  console.error(where, err);
+  let bar = document.getElementById('fatal-error-bar');
+  if(!bar){
+    bar = document.createElement('div');
+    bar.id='fatal-error-bar';
+    bar.style.cssText='position:fixed;top:0;left:0;right:0;background:#B23B3B;color:#fff;padding:10px 14px;font-size:12.5px;z-index:999;font-family:monospace;';
+    document.body.prepend(bar);
+  }
+  bar.textContent = 'Ada error di ' + where + ': ' + (err && err.message ? err.message : err);
+  document.getElementById('dice-btn').disabled = false;
+}
+window.addEventListener('error', (e)=> showFatalError('script', e.error||e.message));
+
+function afterMove(id,pos){
+  try{
+    renderTurn();
+    const z = zoneOf(pos);
+    if(!state.seenZoneBanner[z.key] && pos>=z.range[0]){
+      state.seenZoneBanner[z.key]=true;
+      showZoneBanner(z, ()=> continueAfterMove(id,pos,z));
+      return;
+    }
+    continueAfterMove(id,pos,z);
+  }catch(err){ showFatalError('afterMove', err); }
+}
+
+function continueAfterMove(id,pos,z){
+  try{
+    if(pos>=100){
+      setTimeout(()=>{ show('screen-final'); renderFinal(); }, 400);
+      return;
+    }
+    const sitSquares = situationSquares(z);
+    if(sitSquares.includes(pos) && state.usedSituations[z.key].length < SITUATIONS[z.key].length){
+      startEncounter(z);
+    } else {
+      nextTurn();
+    }
+  }catch(err){ showFatalError('continueAfterMove', err); }
+}
+
+function nextTurn(){
+  state.currentTurn = (state.currentTurn+1) % state.players.length;
+  renderTurn();
+  document.getElementById('dice-btn').disabled = false;
+}
+
+/* ============================================================
+   ZONE BANNER
+   ============================================================ */
+function showZoneBanner(zone, onDone){
+  const el = document.getElementById('zone-banner-overlay');
+  el.style.display='flex';
+  el.innerHTML = `<div class="zone-banner-card">
+    <span class="em">${zone.emoji}</span>
+    <h2>${zone.label.toUpperCase()} ZONE</h2>
+    <p>${zone.intro}</p>
+    <button class="btn-primary" id="zone-continue">LANJUTKAN</button>
+  </div>`;
+  document.getElementById('zone-continue').onclick = ()=>{
+    el.style.display='none';
+    onDone();
+  };
+}
+
+/* ============================================================
+   ENCOUNTER FLOW
+   ============================================================ */
+function startEncounter(zone){
+  try{
+    const availableIdx = SITUATIONS[zone.key].map((_,i)=>i).filter(i=>!state.usedSituations[zone.key].includes(i));
+    if(availableIdx.length===0){ nextTurn(); return; }
+    const idx = availableIdx[Math.floor(Math.random()*availableIdx.length)];
+    state.usedSituations[zone.key].push(idx);
+    const data = SITUATIONS[zone.key][idx];
+    state.currentEncounter = {
+      zone, idx, data,
+      stepIndex: 0,
+      metoo: {}, thought:{}, emotion:{}, peer:Array(PEER_QUESTIONS.length).fill(''),
+      insight:{yang_kami_sadari:'',tips:'',hal_dilakukan:''}, reflect:'',
+      wwyd:{choices:[], reasoning:''},
+    };
+    document.getElementById('overlay-flow').classList.remove('hidden');
+    renderStep();
+  }catch(err){ showFatalError('startEncounter', err); }
+}
+
+function stepProgressDots(){
+  return `<div class="progress-dots">${STEP_ORDER.map((s,i)=>`<span class="${i<=state.currentEncounter.stepIndex?'done':''}"></span>`).join('')}</div>`;
+}
+
+function renderStep(){
+ try{
+  const enc = state.currentEncounter;
+  const step = STEP_ORDER[enc.stepIndex];
+  const sheet = document.getElementById('flow-sheet');
+  let html = '';
+
+  if(step==='situation'){
+    html = `<div class="step-tag">📚 Situation</div><h3 class="step-title">Situasi</h3>
+      <div class="quote-box">${enc.data.s}</div>`;
+  }
+  else if(step==='metoo'){
+    html = `<div class="step-tag">🤝 Me Too!</div><h3 class="step-title">Apakah kamu pernah mengalami situasi seperti ini?</h3>
+      <div class="metoo-row">${state.players.map(id=>{
+        const p = PLAYER_DEFS[id];
+        const val = enc.metoo[id];
+        return `<div class="metoo-card">
+          <span class="pname"><span class="dot" style="background:${p.color}"></span>${p.emoji} ${p.name}</span>
+          <div class="toggle-2">
+            <button data-id="${id}" data-v="yes" class="${val==='yes'?'on':''}">🙋 ME TOO</button>
+            <button data-id="${id}" data-v="no" class="${val==='no'?'on':''}">🙅 BELUM</button>
+          </div></div>`;
+      }).join('')}</div>
+      <div class="metoo-tally" id="metoo-tally"></div>`;
+  }
+  else if(step==='thought'){
+    html = `<div class="step-tag">🧠 Thought</div><h3 class="step-title">Ketika menghadapi situasi ini, apa yang muncul dalam pikiranmu?</h3>
+      ${state.players.map(id=>{
+        const p = PLAYER_DEFS[id];
+        return `<div class="player-block">
+          <label><span class="dot" style="background:${p.color}"></span>${p.emoji} ${p.name}</label>
+          <textarea data-id="${id}" placeholder="Tulis apa yang muncul di pikiranmu...">${enc.thought[id]||''}</textarea>
+        </div>`;
+      }).join('')}`;
+  }
+  else if(step==='emotion'){
+    html = `<div class="step-tag">❤️ Emotion</div><h3 class="step-title">Apa yang kamu rasakan? (boleh pilih lebih dari satu)</h3>
+      ${state.players.map(id=>{
+        const p = PLAYER_DEFS[id];
+        const chosen = enc.emotion[id]||[];
+        return `<div class="player-block">
+          <label><span class="dot" style="background:${p.color}"></span>${p.emoji} ${p.name}</label>
+          <div class="emoji-chips">${EMOTIONS.map(e=>`<span class="chip ${chosen.includes(e)?'on':''}" data-id="${id}" data-e="${e}">${e}</span>`).join('')}</div>
+        </div>`;
+      }).join('')}`;
+  }
+  else if(step==='peer'){
+    html = `<div class="step-tag">👥 Peer Discussion</div><h3 class="step-title">Let's Talk</h3>
+      <p style="color:var(--ink-soft);font-size:14px;margin-top:-6px;">Sekarang waktunya ngobrol bersama.</p>
+      ${PEER_QUESTIONS.map((q,i)=>`<div class="qa-block"><div class="q">${i+1}. ${q}</div>
+        <textarea data-i="${i}">${enc.peer[i]||''}</textarea></div>`).join('')}`;
+  }
+  else if(step==='insight'){
+    html = `<div class="step-tag">📝 Group Insight</div><h3 class="step-title">Apa yang kalian dapatkan dari diskusi tadi?</h3>
+      <div class="insight-field"><span class="lbl">💭 Yang kami sadari</span><textarea id="ins-1">${enc.insight.yang_kami_sadari}</textarea></div>
+      <div class="insight-field"><span class="lbl">💡 Tips dari kelompok kami</span><textarea id="ins-2">${enc.insight.tips}</textarea></div>
+      <div class="insight-field"><span class="lbl">🎯 Hal yang bisa dilakukan</span><textarea id="ins-3">${enc.insight.hal_dilakukan}</textarea></div>`;
+  }
+  else if(step==='note'){
+    html = `<div class="step-tag">💬 Counselor's Note</div><h3 class="step-title">Catatan</h3>
+      <div class="quote-box">${enc.data.note}</div>`;
+  }
+  else if(step==='reflect'){
+    html = `<div class="step-tag">🔍 Let's Reflect</div><h3 class="step-title">Apakah ada sesuatu yang sekarang kalian lihat dengan cara yang berbeda?</h3>
+      <textarea id="reflect-area" placeholder="Tuliskan hasil pemikiran kelompok kalian...">${enc.reflect}</textarea>
+      <p style="color:var(--ink-soft);font-size:12.5px;margin-top:8px;">Tidak ada jawaban benar/salah. Kalau pemikiran kalian tetap sama, tidak masalah.</p>`;
+  }
+  else if(step==='wwyd'){
+    const opts = WWYD_OPTIONS[enc.zone.key];
+    html = `<div class="step-tag">🎯 What Would You Do?</div><h3 class="step-title">Satu hal apa yang paling mungkin dilakukan?</h3>
+      ${opts.map(o=>`<div class="wwyd-opt"><input type="checkbox" id="w-${o}" ${enc.wwyd.choices.includes(o)?'checked':''} data-o="${o}"><label for="w-${o}">${o}</label></div>`).join('')}
+      <div class="qa-block" style="margin-top:14px;"><div class="q">Mengapa kalian memilih langkah tersebut?</div>
+        <textarea id="wwyd-reason">${enc.wwyd.reasoning}</textarea></div>`;
+  }
+  else if(step==='feedback'){
+    const chosen = enc.wwyd.choices.length? enc.wwyd.choices.join(', ').toLowerCase() : 'langkah yang kalian tulis tadi';
+    html = `<div class="step-tag">💬 Counselor Feedback</div><h3 class="step-title">Catatan untuk kalian</h3>
+      <div class="quote-box">Ketika banyak hal terasa berat, memilih satu langkah kecil seperti <em>${chosen}</em> bisa membantu meringankan tekanan itu sedikit demi sedikit. Tidak harus langsung terasa lega — cukup coba pelan-pelan, dan beri diri kalian waktu untuk melihat hasilnya.</div>`;
+  }
+  else if(step==='breathe'){
+    html = `<div class="step-tag">🌿 Take a Break</div><h3 class="step-title">Calm Breath</h3>
+      <p style="color:var(--ink-soft);font-size:14px;margin-top:-6px;">Kalian baru saja menyelesaikan satu situasi. Sebelum melanjutkan perjalanan, yuk ambil jeda sebentar.</p>
+      <div class="breathe-wrap">
+        <div class="breathe-circle">Tarik napas</div>
+        <div class="breathe-label">Tarik napas perlahan... tahan sebentar... buang perlahan... ulangi.<br>Tidak harus langsung merasa tenang. Beri diri kalian waktu.</div>
+      </div>`;
+  }
+
+  const isLast = step==='breathe';
+  const isFirst = enc.stepIndex===0;
+  sheet.innerHTML = `${html}
+    <div class="step-nav">
+      <button class="btn-ghost" id="step-back" ${isFirst?'style="visibility:hidden"':''}>Kembali</button>
+      ${stepProgressDots()}
+      <button class="btn-primary" id="step-next">${isLast?'LANJUTKAN QUEST':'Lanjut'}</button>
+    </div>`;
+
+  bindStepInputs(step);
+  document.getElementById('step-back').onclick = ()=>{ enc.stepIndex--; renderStep(); };
+  document.getElementById('step-next').onclick = ()=>{
+    if(isLast){ finishEncounter(); }
+    else { enc.stepIndex++; renderStep(); }
+  };
+
+  if(step==='metoo') updateMetooTally();
+ }catch(err){ showFatalError('renderStep', err); }
+}
+
+function bindStepInputs(step){
+  const enc = state.currentEncounter;
+  if(step==='metoo'){
+    document.querySelectorAll('.toggle-2 button').forEach(btn=>{
+      btn.onclick = ()=>{
+        enc.metoo[btn.dataset.id] = btn.dataset.v;
+        renderStep();
+      };
+    });
+  }
+  if(step==='thought'){
+    document.querySelectorAll('#flow-sheet textarea[data-id]').forEach(t=>{
+      t.oninput = ()=> enc.thought[t.dataset.id] = t.value;
+    });
+  }
+  if(step==='emotion'){
+    document.querySelectorAll('.chip').forEach(c=>{
+      c.onclick = ()=>{
+        const id = c.dataset.id, e = c.dataset.e;
+        enc.emotion[id] = enc.emotion[id] || [];
+        const i = enc.emotion[id].indexOf(e);
+        if(i>-1) enc.emotion[id].splice(i,1); else enc.emotion[id].push(e);
+        renderStep();
+      };
+    });
+  }
+  if(step==='peer'){
+    document.querySelectorAll('#flow-sheet textarea[data-i]').forEach(t=>{
+      t.oninput = ()=> enc.peer[t.dataset.i] = t.value;
+    });
+  }
+  if(step==='insight'){
+    document.getElementById('ins-1').oninput = e=> enc.insight.yang_kami_sadari = e.target.value;
+    document.getElementById('ins-2').oninput = e=> enc.insight.tips = e.target.value;
+    document.getElementById('ins-3').oninput = e=> enc.insight.hal_dilakukan = e.target.value;
+  }
+  if(step==='reflect'){
+    document.getElementById('reflect-area').oninput = e=> enc.reflect = e.target.value;
+  }
+  if(step==='wwyd'){
+    document.querySelectorAll('.wwyd-opt input').forEach(chk=>{
+      chk.onchange = ()=>{
+        const o = chk.dataset.o;
+        const i = enc.wwyd.choices.indexOf(o);
+        if(chk.checked && i===-1) enc.wwyd.choices.push(o);
+        if(!chk.checked && i>-1) enc.wwyd.choices.splice(i,1);
+      };
+    });
+    document.getElementById('wwyd-reason').oninput = e=> enc.wwyd.reasoning = e.target.value;
+  }
+}
+
+function updateMetooTally(){
+  const enc = state.currentEncounter;
+  const yes = Object.values(enc.metoo).filter(v=>v==='yes').length;
+  const total = state.players.length;
+  document.getElementById('metoo-tally').textContent =
+    `${yes} dari ${total} pemain pernah mengalami situasi serupa. Tidak ada penilaian.`;
+}
+
+function finishEncounter(){
+  document.getElementById('overlay-flow').classList.add('hidden');
+  state.currentEncounter = null;
+  nextTurn();
+}
+
+/* ============================================================
+   FINAL REFLECTION + REWARD
+   ============================================================ */
+function renderFinal(){
+  const el = document.getElementById('final-questions');
+  el.innerHTML = FINAL_QUESTIONS.map((q,i)=>`<div class="qa-block"><div class="q">${i+1}. ${q}</div><textarea id="fq-${i}"></textarea></div>`).join('');
+}
+document.getElementById('final-submit').onclick = ()=>{
+  show('screen-reward');
+};
+document.getElementById('restart-btn').onclick = ()=>{
+  state = {
+    players: [], positions:{}, currentTurn:0,
+    usedSituations: {akademik:[], pertemanan:[], keluarga:[], masa_depan:[], media_sosial:[]},
+    seenZoneBanner:{}, currentEncounter:null, finished:false,
+  };
+  show('screen-start');
+};
+</script>
+</body>
+</html>
